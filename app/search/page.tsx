@@ -21,6 +21,8 @@ const fetchResturantsByLocation = async (name: string | undefined) => {
                 name: true,
                 main_image: true,
                 price: true,
+                cuisine: true,
+                location: true,
                 slug: true,
             }
         });

@@ -1,22 +1,22 @@
-import { PRICE } from "@prisma/client";
+import { Cuisine, Location, PRICE } from "@prisma/client";
 import Price from "app/components/Price";
 import Link from "next/link";
 interface Props {
-    restaurant: {
-        name: string;
-        main_image: string;
-        price: PRICE;
-        slug: string;
-    }
+    price: PRICE;
+    name: string;
+    main_image: string;
+    cuisine: Cuisine;
+    location: Location;
+    slug: string;
 }
 
-export default function SearchRestaurantCard({ restaurant }: Props) {
+export default function SearchRestaurantCard({ restaurant }: { restaurant: Props }) {
     return (
         <div className="border-b flex pb-5">
             <img
                 src={restaurant.main_image}
                 alt=""
-                className="w-44 rounded"
+                className="w-44 rounded h-40"
             />
             <div className="pl-5">
                 <h2 className="text-3xl">{restaurant.name}</h2>
@@ -27,12 +27,12 @@ export default function SearchRestaurantCard({ restaurant }: Props) {
                 <div className="mb-9">
                     <div className="font-light flex text-reg">
                         <Price price={restaurant.price} />
-                        <p className="mr-4">Mexican</p>
-                        <p className="mr-4">Ottawa</p>
+                        <p className="mr-4 capitalize">{restaurant.cuisine.name}</p>
+                        <p className="mr-4 capitalize">{restaurant.location.name}</p>
                     </div>
                 </div>
                 <div className="text-red-600">
-                    <Link href="/restaurant/milestones-stones">View more information</Link>
+                    <Link href={`/restaurant/${restaurant.slug}`}>View more information</Link>
                 </div>
             </div>
         </div>
