@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PRICE, PrismaClient } from "@prisma/client";
 import SearchHeader from "./components/SearchHeader";
 import SearchRestaurantCard from "./components/SearchRestaurantCard";
 import SearchSideBar from "./components/SearchSideBar";
@@ -53,7 +53,7 @@ const fetchAllCuisines = async () => {
 export default async function Search({
     searchParams,
 }: {
-    searchParams?: { [key: string]: string | string[] | undefined };
+    searchParams?: { city?: string, cuisine?: string, price?: PRICE };
 }) {
 
     const searchLocation = searchParams?.city?.toString().toLowerCase();
@@ -65,7 +65,7 @@ export default async function Search({
         <>
             <SearchHeader />
             <div className="flex py-4 m-auto w-2/3 justify-between items-start text-black">
-                <SearchSideBar locations={locations} cuisines={cuisines}/>
+                <SearchSideBar locations={locations} cuisines={cuisines} searchParams={searchParams} />
                 <div className="w-5/6">
                     {!restaurants ? <h2 className="text-2xl">There is no restaurants in this city !</h2> : restaurants.map(restaurant => (
                         <SearchRestaurantCard restaurant={restaurant} />
