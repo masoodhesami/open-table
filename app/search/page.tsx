@@ -3,32 +3,13 @@ import SearchHeader from "./components/SearchHeader";
 import SearchRestaurantCard from "./components/SearchRestaurantCard";
 import SearchSideBar from "./components/SearchSideBar";
 
-const prisma = new PrismaClient();
-
-const fetchResturantsByLocation = async (name: string | undefined) => {
-    const location = await prisma.location.findMany({
-        where: {
-            name
-        }
-    });
-
-    if (location.length !== 0) {
-        const restaurants = await prisma.restaurant.findMany({
-            where: {
-                location_id: location[0]?.id
-            },
-            select: {
-                name: true,
-                main_image: true,
-                price: true,
-                cuisine: true,
-                location: true,
-                slug: true,
-            }
-        });
-        return restaurants;
-    }
+interface SearchParams {
+    city?: string | undefined;
+    cuisine?: string | undefined;
+    price?: PRICE | undefined;
 }
+
+const prisma = new PrismaClient();
 
 const fetchAllLocations = async () => {
     const locations = await prisma.location.findMany({
@@ -50,16 +31,44 @@ const fetchAllCuisines = async () => {
     return cuisines;
 }
 
+const fetchRestaurantsDependOnSearchParams = async (searchParams: SearchParams | undefined) => {
+    const restaurants = await prisma.restaurant.findMany({
+        where: {
+            location: {
+                name: {
+                    equals: searchParams?.city?.toLowerCase()
+                }
+            },
+            cuisine: {
+                name: {
+                    equals: searchParams?.cuisine?.toLowerCase()
+                }
+            },
+            price: {
+                equals: searchParams?.price
+            }
+        },
+        select: {
+            name: true,
+            main_image: true,
+            price: true,
+            cuisine: true,
+            location: true,
+            slug: true,
+        }
+    });
+    return restaurants;
+}
+
 export default async function Search({
     searchParams,
 }: {
-    searchParams?: { city?: string, cuisine?: string, price?: PRICE };
+    searchParams?: SearchParams;
 }) {
 
-    const searchLocation = searchParams?.city?.toString().toLowerCase();
-    const restaurants = await fetchResturantsByLocation(searchLocation);
     const locations = await fetchAllLocations();
     const cuisines = await fetchAllCuisines();
+    const restaurants = await fetchRestaurantsDependOnSearchParams(searchParams);
 
     return (
         <>
