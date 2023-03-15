@@ -49,12 +49,14 @@ const fetchRestaurantsDependOnSearchParams = async (searchParams: SearchParams |
             }
         },
         select: {
+            id: true,
             name: true,
             main_image: true,
             price: true,
             cuisine: true,
             location: true,
             slug: true,
+            reviews: true
         }
     });
     return restaurants;

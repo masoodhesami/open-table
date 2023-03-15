@@ -36,18 +36,30 @@ const fetchRestaurantBySlug = async (slug: string): Promise<Restaurant> => {
     return restaurant;
 }
 
+const fetchReviewsByRestaurantId = async (restaurant_id: number) => {
+    const reviews = await prisma.review.findMany({
+        where: {
+            restaurant_id
+        }
+    });
+
+    return reviews;
+}
+
 export default async function RestaurantDetails({ params }: { params: { slug: string } }) {
 
-    const restaurant = await fetchRestaurantBySlug(params.slug)
+    const restaurant = await fetchRestaurantBySlug(params.slug);
+    const restaurantReviews = await fetchReviewsByRestaurantId(restaurant.id);
+    
     return (
         <>
             <div className="bg-white w-[70%] rounded p-3 shadow">
                 <ResNavbar slug={restaurant.slug} />
                 <ResTitle name={restaurant.name} />
-                <ResRating />
-                <ResDescription description ={restaurant.description} />
-                <ResImages images={restaurant.images}/>
-                <ResReviews />
+                <ResRating reviews={restaurantReviews}/>
+                <ResDescription description={restaurant.description} />
+                <ResImages images={restaurant.images} />
+                <ResReviews reviews={restaurantReviews} />
             </div>
             <div className="w-[27%] relative text-reg">
                 <ResReservationCard />
